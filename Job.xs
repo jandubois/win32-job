@@ -461,7 +461,7 @@ exe_found:
 		    HANDLE t = CreateFile(
 			    SvPV_nolen(tmp),
 			    GENERIC_WRITE,
-			    FILE_SHARE_WRITE,
+			    FILE_SHARE_WRITE|FILE_SHARE_READ,
 			    NULL,
 			    OPEN_ALWAYS,
 			    FILE_ATTRIBUTE_NORMAL,
@@ -485,7 +485,7 @@ exe_found:
 		    HANDLE t = CreateFile(
 			    SvPV_nolen(tmp),
 			    GENERIC_WRITE,
-			    FILE_SHARE_WRITE,
+			    FILE_SHARE_WRITE|FILE_SHARE_READ,
 			    NULL,
 			    OPEN_ALWAYS,
 			    FILE_ATTRIBUTE_NORMAL,

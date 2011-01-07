@@ -1,5 +1,9 @@
 Revision history for Perl extension Win32::Console
 
+0.04 2011-01-06
+        - Open the log files with FILE_SHARE_READ so that they can be read
+	  while the subprocess is still running (John Elion). [rt#49946]
+
 0.03 2008-06-13
         - move sample.pl and child.t into the eg/ subdirectory to avoid
 	  sample.pl from getting installed
