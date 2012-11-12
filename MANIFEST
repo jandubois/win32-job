@@ -7,3 +7,4 @@ Makefile.PL
 eg/child.t
 eg/sample.pl
 typemap
+t/00-load.t
