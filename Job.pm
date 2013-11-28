@@ -4,7 +4,7 @@ use strict;
 use base qw(DynaLoader);
 use vars qw($VERSION);
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 use constant WIN32s => 0;
 use constant WIN9X  => 1;
