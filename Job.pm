@@ -242,6 +242,10 @@ will $timeout.
 You can get extended information on process exit codes using the
 status() method.
 
+Let assume process A creates job with process B, process B creates job
+with process C. Job with process B is killed by timeout. Job with
+process C will run till it's own timeout, even on Windows 8.
+
 For example, this is how to build two perl modules at the same time,
 with a 5 minute timeout:
 
