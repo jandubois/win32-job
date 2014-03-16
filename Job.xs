@@ -638,6 +638,12 @@ watch(self, callback, interval, ...)
     OUTPUT:
 	RETVAL
 
+void
+start(self)
+       JOB_T   self
+    CODE:
+       resume_threads(aTHX_ self->procs);
+
 HV*
 status(self)
 	JOB_T	self

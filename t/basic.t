@@ -24,6 +24,18 @@ use File::Temp qw/ tempfile /;
     cmp_ok time - $t, '<', 5, "less than the sleep time was used";
 }
 
+{
+    my $job = Win32::Job->new;
+    spawn_perl( $job, qq{perl -e "sleep 1"} );
+    $job->start;
+    my $counter;
+    while ( $job->is_running ) { $counter++ }
+    my ( $process ) = values %{ $job->status };
+    ok !$process->{exitcode}, "process succeeded";
+    cmp_ok $process->{time}{elapsed}, '>', 0.9, "process did sleep";
+    cmp_ok $counter, '>', 1, "work was done while waiting";
+}
+
 done_testing;
 
 sub spawn_perl {

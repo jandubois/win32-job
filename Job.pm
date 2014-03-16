@@ -9,6 +9,8 @@ $VERSION = '0.05';
 use constant WIN32s => 0;
 use constant WIN9X  => 1;
 use constant WINNT  => 2;
+use constant STILL_ACTIVE_EXITCODE => 259;
+use constant KILLED_EXITCODE => 293;
 
 require Win32 unless defined &Win32::GetOSVersion;
 my @ver = Win32::GetOSVersion;
@@ -21,6 +23,13 @@ die "Win32::Job is not supported on $ver[0]" unless (
 );
 
 Win32::Job->bootstrap($VERSION);
+
+sub is_running {
+	my ( $self ) = @_;
+	my @return_values = map $_->{exitcode}, values %{ $self->status };
+	my $processes_running = grep { $_ == STILL_ACTIVE_EXITCODE } @return_values;
+	return $processes_running;
+}
 
 1;
 
@@ -286,6 +295,32 @@ the file becomes larger than a certain limit:
    }, 1);
    print "Mod1 built ok!\n" if $ok;
 
+=item 4
+
+start()
+
+    start()
+
+Start the job, but don't wait for it to finish. Has no return value. You can
+check whether it's finished with is_running() or looking at the result of
+status().
+
+Here's equivalent code to the watch() example, except using start():
+
+   use Win32::Job;
+   $job = Win32::Job->new;
+   $job->spawn("cmd", q{cmd /C "cd Mod1 && nmake"}, {
+       stdin  => 'NUL', # the NUL device
+       stdout => 'stdout.log',
+       stderr => 'stdout.log',
+   });
+   $job->start();
+   while ( $job->is_running() ) {
+       sleep(1);
+       $job->kill if -s "stdout.log" > 1_000_000;
+   }
+   print "Mod1 built ok!\n" if $ok;
+
 =item 5
 
 status()
@@ -304,8 +339,11 @@ containing the following keys:
 
 =item exitcode
 
-The exit code returned by the process. If the process was killed because
-of a timeout, the value is 293.
+The exit code returned by the process. If the process was killed, the value is
+293, if the process is still running, the value is 259.
+
+You can also use the constant Win32::Job::KILLED_EXITCODE or
+Win32::Job::STILL_ACTIVE_EXITCODE.
 
 =item time
 
@@ -325,6 +363,14 @@ kill()
 Kills all processes and subprocesses in the Job. Has no return value.
 Sets the exit code to all processes killed to 293, which you can check
 for in the status() return value.
+
+=item 7
+
+is_running()
+
+    is_running()
+
+Returns the number of processes currently running.
 
 =back
 
